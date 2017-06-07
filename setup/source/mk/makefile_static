@@ -1,0 +1,72 @@
+
+
+CUDAINCDIR	= -I/usr/local/cuda/include
+CUDALIBDIR	= -L/usr/local/cuda/lib64
+CUDALIBS	= -lcusparse -lcusolver -lcudart
+
+KERNELS		= \
+"../helper/cudahelper/cudahelper.cu"\
+"../task/task_allocate.cu"\
+"../task/task_applyparameters.cu"\
+"../task/task_calcerrval.cu"\
+"../task/task_correlation.cu"\
+"../task/task_expandresults.cu"\
+"../task/task_filldiagonals.cu"\
+"../task/task_filljtr.cu"\
+"../task/task_generatesubsparseoffset.cu"\
+"../task/task_linesearch.cu"\
+"../task/task_maskinactive.cu"\
+"../task/task_updategradients.cu"\
+"../task/solver/cusolversolver.cu"\
+"../task/solver/cusparsesolver.cu"\
+"../task/solver/eigensolver.cu"\
+"../task/filter/d_medianfilter.cu"
+
+
+MEX		= $(MATLABROOT)/bin/mex
+MEXINCDIR	= -I$(MATLABROOT)/extern/include
+MEXFLAGS	= COPTIMFLAGS="-O3 -fPIC -std=c++11 -DNDEBUG" CXXFLAGS="-std=c++11 -fPIC -O3 -DNDEBUG"
+MEXSOURCES	=\
+"../mex/align_group_to_template.cpp"\
+"cudahelper.o"\
+"task_allocate.o"\
+"task_applyparameters.o"\
+"task_calcerrval.o"\
+"task_correlation.o"\
+"task_expandresults.o"\
+"task_filldiagonals.o"\
+"task_filljtr.o"\
+"task_generatesubsparseoffset.o"\
+"task_linesearch.o"\
+"task_maskinactive.o"\
+"task_updategradients.o"\
+"cusolversolver.o"\
+"cusparsesolver.o"\
+"eigensolver.o"\
+"d_medianfilter.o"\
+\
+"../helper/helper.cpp"\
+"../helper/memtracker/memtracker.cpp"\
+"../helper/mexhelper.cpp"\
+"../interface/parameterorganizer/parameterorganizer.cpp"\
+"../interface/stopcriterion.cpp"\
+"../mex/conversionvalidator/conversionvalidator.cpp"\
+"../mex/conversionvalidator/printconversionvalidator.cpp"\
+"../mex/mexsimulator/mexsimulator.cpp"\
+"../mex/configuration.cpp"\
+"../mex/mexconverter.cpp"\
+"../mex/mexgateway.cpp"\
+"../task/filter/nofilter.cpp"\
+"../task/filter/smearingfilter.cpp"\
+"../task/filter/rangefilter.cpp"\
+"../task/filter/medianfilter.cpp"\
+"../task/mainiteration/mainiteration.cpp"\
+"../task/mainiteration/timedmainiteration.cpp"\
+"../task/solver/eigen/eigensolve.cpp"\
+"../mex/reporter/reporter.cpp"\
+"../task/task.cpp"
+
+all:
+	$(NVCC) $(NVCCFLAGS) $(CUDAINCDIR) $(CUDALIBDIR) $(CUDALIBS) $(KERNELS)	
+	$(MEX) $(MEXFLAGS) $(CUDAINCDIR) $(CUDALIBDIR) $(CUDALIBS) $(MEXSOURCES)
+clean:
